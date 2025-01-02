@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLCinema - Cartelera</title>
+
+    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='images/8029330.ico') }}">
+
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #fff; /* Fondo blanco */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .content {
+            width: 100vw;
+            margin: 0 auto;
+            padding: 30px 0;
+            box-sizing: border-box;
+            background-color: #fff; /* Fondo blanco para las pestañas y el contenido */
+            min-height: 100vh; /* Evita que se corte en dispositivos móviles */
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1); /* Añadimos sombra para distinguir */
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .nav-pills {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 0;
+            box-sizing: border-box;
+            gap: 10px; /* Añadido para separar las pestañas */
+            flex-wrap: wrap; /* Permitir que las pestañas se ajusten en una nueva línea si es necesario */
+        }
+
+        .nav-item {
+            flex: 1;
+            margin: 0;
+        }
+
+        .nav-pills .nav-link {
+            font-weight: bold;
+            text-align: center;
+            background: #343436;
+            color: #fff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            height: 50px;
+            line-height: 50px;
+            margin: 0;
+            display: block;
+            text-decoration: none;
+            font-size: 18px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            box-sizing: border-box;
+        }
+
+        .nav-pills .nav-link.active {
+            background: #f0f0f0; /* Gris muy claro para la pestaña activa */
+            color: #000;
+            border-bottom: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+        }
+
+        .tab-content {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border-radius: 0px 0px 10px 10px;
+            padding: 30px;
+            box-sizing: border-box;
+            min-height: 400px; /* Asegura que el contenido tenga una altura mínima */
+        }
+
+        table {
+            width: 100%;
+            table-layout: auto;
+            border-collapse: collapse;
+            background-color: white;
+            margin: 0;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: rgb(0, 33, 76);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgb(232, 239, 240); /* Colores alternos para las filas */
+        }
+
+        td img {
+            width: 80px;
+            height: auto;
+        }
+
+        .session-button {
+            background-color: rgb(15, 133, 243);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            font-size: 14px;
+            margin: 5px 2px;
+            cursor: pointer;
+            border-radius: 20px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .session-button:hover {
+            background-color: rgb(12, 110, 200);
+        }
+
+        #tabla-teatro, #tabla-exposiciones {
+            display: none;
+        }
+
+        .descripcion {
+            text-align: justify;
+        }
+
+        @media (max-width: 768px) {
+            .nav-pills {
+                flex-direction: row; /* Mantener las pestañas en fila horizontal */
+                flex-wrap: nowrap; /* Evitar que las pestañas se apilen verticalmente */
+                overflow-x: auto; /* Habilitar desplazamiento horizontal en caso de ser necesario */
+                gap: 5px; /* Reducir el espacio entre las pestañas en pantallas pequeñas */
+            }
+
+            .nav-pills .nav-item {
+                flex: none; /* Desactivar el estirado de los elementos para mantener el tamaño compacto */
+                margin-bottom: 0;
+            }
+
+            th, td {
+                font-size: 14px;
+            }
+
+            .session-button {
+                width: 100%; /* Permitir que los botones se ajusten al ancho disponible */
+                padding: 8px; /* Ajustar padding para pantallas pequeñas */
+                margin: 5px 0; /* Evitar solapamiento entre botones en pantallas pequeñas */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/Titulo.png') }}" alt="RLCinema - Cartelera">
+        </div>
+
+        <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="tab-cine" data-toggle="pill" href="#cine">Cine</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tab-teatro" data-toggle="pill" href="#teatro">Teatro</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tab-exposiciones" data-toggle="pill" href="#exposiciones">Exposiciones</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="cine" class="tab-pane active">
+                <table id="tabla-cine">
+                    <thead>
+                        <tr>
+                            <th>Cine</th>
+                            <th>Carátula</th>
+                            <th>Título</th>
+                            <th>Director</th>
+                            <th>Duración</th>
+                            <th>Versión</th>
+                            <th>Sesiones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pelicula in peliculas_sesiones %}
+                        <tr>
+                            <td>{{ pelicula['Cine'] }}</td>
+                            <td><img src="{{ pelicula['Carátula'] }}" alt="Carátula"></td>
+                            <td>{{ pelicula['Título'] }}</td>
+                            <td>{{ pelicula['Director'] }}</td>
+                            <td>{{ pelicula['Duración'] }}</td>
+                            <td>{{ pelicula['Versión'] }}</td>
+                            <td class="sessions-cell">
+                                {% for i in range(1, 7) %}
+                                    {% if pelicula['Sesión ' ~ i] %}
+                                        <a href="{{ pelicula['Link Sesión ' ~ i] }}" class="session-button" target="_blank">{{ pelicula['Sesión ' ~ i] }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="teatro" class="tab-pane fade">
+                <table id="tabla-teatro">
+                    <thead>
+                        <tr>
+                            <th>Teatro</th>
+                            <th>Carátula</th>
+                            <th>Título</th>
+                            <th>Director</th>
+                            <th>Duración</th>
+                            <th>Versión</th>
+                            <th>Sesiones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obra in obras_sesiones %}
+                        <tr>
+                            <td>{{ obra['Teatro'] }}</td>
+                            <td><img src="{{ obra['Carátula'] }}" alt="Carátula"></td>
+                            <td>{{ obra['Título'] }}</td>
+                            <td>{{ obra['Director'] }}</td>
+                            <td>{{ obra['Duración'] }}</td>
+                            <td>{{ obra['Versión'] }}</td>
+                            <td class="sessions-cell">
+                                {% for i in range(1, 7) %}
+                                    {% if obra['Sesión ' ~ i] %}
+                                        <a href="{{ obra['Link Sesión ' ~ i] }}" class="session-button" target="_blank">{{ obra['Sesión ' ~ i] }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="exposiciones" class="tab-pane fade">
+                <table id="tabla-exposiciones">
+                    <thead>
+                        <tr>
+                            <th>Carátula</th>
+                            <th>Exposición</th>
+                            <th>Descripción</th>
+                            <th>Lugar</th>
+                            <th>Fechas</th>
+                            <th>Precio</th>
+                            <th>Entradas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exposicion in exposiciones_sesiones %}
+                        <tr>
+                            <td><img src="{{ exposicion['Carátula Exposición'] }}" alt="Carátula Exposición"></td>
+                            <td>{{ exposicion['Exposición'] }}</td>
+                            <td class="descripcion">{{ exposicion['Descripción'] }}</td>
+                            <td>{{ exposicion['Lugar'] }}</td>
+                            <td>{{ exposicion['Fechas'] }}</td>
+                            <td>{{ exposicion['Precio'] }}</td>
+                            <td><a href="{{ exposicion['Entradas'] }}" class="session-button" target="_blank">Comprar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabCine = document.getElementById('tab-cine');
+            const tabTeatro = document.getElementById('tab-teatro');
+            const tabExposiciones = document.getElementById('tab-exposiciones');
+            const tablaCine = document.getElementById('tabla-cine');
+            const tablaTeatro = document.getElementById('tabla-teatro');
+            const tablaExposiciones = document.getElementById('tabla-exposiciones');
+
+            // Función para cambiar entre pestañas
+            tabCine.addEventListener('click', function () {
+                tabCine.classList.add('active');
+                tabTeatro.classList.remove('active');
+                tabExposiciones.classList.remove('active');
+                tablaCine.style.display = 'table';
+                tablaTeatro.style.display = 'none';
+                tablaExposiciones.style.display = 'none';
+            });
+
+            tabTeatro.addEventListener('click', function () {
+                tabCine.classList.remove('active');
+                tabTeatro.classList.add('active');
+                tabExposiciones.classList.remove('active');
+                tablaCine.style.display = 'none';
+                tablaTeatro.style.display = 'table';
+                tablaExposiciones.style.display = 'none';
+            });
+
+            tabExposiciones.addEventListener('click', function () {
+                tabCine.classList.remove('active');
+                tabTeatro.classList.remove('active');
+                tabExposiciones.classList.add('active');
+                tablaCine.style.display = 'none';
+                tablaTeatro.style.display = 'none';
+                tablaExposiciones.style.display = 'table';
+            });
+        });
+    </script>
+</body>
+</html>
