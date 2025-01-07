@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RLCinema - Cartelera</title>
-
-    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='images/8029330.ico') }}">
-
+    <link rel="icon" type="image/ico" href="./static/images/8029330.ico">
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -139,8 +137,12 @@
             background-color: rgb(12, 110, 200);
         }
 
-        #tabla-teatro, #tabla-exposiciones {
+        .tab-pane {
             display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
 
         .descripcion {
@@ -175,18 +177,18 @@
 <body>
     <div class="content">
         <div class="logo-container">
-            <img src="{{ url_for('static', filename='images/Titulo.png') }}" alt="RLCinema - Cartelera">
+            <img src="./static/images/Titulo.png" alt="RLCinema - Cartelera">
         </div>
 
         <ul class="nav nav-pills" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="tab-cine" data-toggle="pill" href="#cine">Cine</a>
+                <a class="nav-link active" id="tab-cine" href="#cine">Cine</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="tab-teatro" data-toggle="pill" href="#teatro">Teatro</a>
+                <a class="nav-link" id="tab-teatro" href="#teatro">Teatro</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="tab-exposiciones" data-toggle="pill" href="#exposiciones">Exposiciones</a>
+                <a class="nav-link" id="tab-exposiciones" href="#exposiciones">Exposiciones</a>
             </li>
         </ul>
 
@@ -204,29 +206,11 @@
                             <th>Sesiones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for pelicula in peliculas_sesiones %}
-                        <tr>
-                            <td>{{ pelicula['Cine'] }}</td>
-                            <td><img src="{{ pelicula['Carátula'] }}" alt="Carátula"></td>
-                            <td>{{ pelicula['Título'] }}</td>
-                            <td>{{ pelicula['Director'] }}</td>
-                            <td>{{ pelicula['Duración'] }}</td>
-                            <td>{{ pelicula['Versión'] }}</td>
-                            <td class="sessions-cell">
-                                {% for i in range(1, 7) %}
-                                    {% if pelicula['Sesión ' ~ i] %}
-                                        <a href="{{ pelicula['Link Sesión ' ~ i] }}" class="session-button" target="_blank">{{ pelicula['Sesión ' ~ i] }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
-            <div id="teatro" class="tab-pane fade">
+            <div id="teatro" class="tab-pane">
                 <table id="tabla-teatro">
                     <thead>
                         <tr>
@@ -239,29 +223,11 @@
                             <th>Sesiones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for obra in obras_sesiones %}
-                        <tr>
-                            <td>{{ obra['Teatro'] }}</td>
-                            <td><img src="{{ obra['Carátula'] }}" alt="Carátula"></td>
-                            <td>{{ obra['Título'] }}</td>
-                            <td>{{ obra['Director'] }}</td>
-                            <td>{{ obra['Duración'] }}</td>
-                            <td>{{ obra['Versión'] }}</td>
-                            <td class="sessions-cell">
-                                {% for i in range(1, 7) %}
-                                    {% if obra['Sesión ' ~ i] %}
-                                        <a href="{{ obra['Link Sesión ' ~ i] }}" class="session-button" target="_blank">{{ obra['Sesión ' ~ i] }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
-            <div id="exposiciones" class="tab-pane fade">
+            <div id="exposiciones" class="tab-pane">
                 <table id="tabla-exposiciones">
                     <thead>
                         <tr>
@@ -274,60 +240,76 @@
                             <th>Entradas</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for exposicion in exposiciones_sesiones %}
-                        <tr>
-                            <td><img src="{{ exposicion['Carátula Exposición'] }}" alt="Carátula Exposición"></td>
-                            <td>{{ exposicion['Exposición'] }}</td>
-                            <td class="descripcion">{{ exposicion['Descripción'] }}</td>
-                            <td>{{ exposicion['Lugar'] }}</td>
-                            <td>{{ exposicion['Fechas'] }}</td>
-                            <td>{{ exposicion['Precio'] }}</td>
-                            <td><a href="{{ exposicion['Entradas'] }}" class="session-button" target="_blank">Comprar</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tabCine = document.getElementById('tab-cine');
-            const tabTeatro = document.getElementById('tab-teatro');
-            const tabExposiciones = document.getElementById('tab-exposiciones');
-            const tablaCine = document.getElementById('tabla-cine');
-            const tablaTeatro = document.getElementById('tabla-teatro');
-            const tablaExposiciones = document.getElementById('tabla-exposiciones');
+        function cargarTabla(url, tablaId, procesarFila) {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Error al cargar ${url}`);
+                    return response.json();
+                })
+                .then(data => {
+                    const tabla = document.querySelector(`#${tablaId} tbody`);
+                    tabla.innerHTML = ''; // Limpia el contenido previo
+                    data.forEach(item => {
+                        const fila = procesarFila(item);
+                        tabla.insertAdjacentHTML('beforeend', fila);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
 
-            // Función para cambiar entre pestañas
-            tabCine.addEventListener('click', function () {
-                tabCine.classList.add('active');
-                tabTeatro.classList.remove('active');
-                tabExposiciones.classList.remove('active');
-                tablaCine.style.display = 'table';
-                tablaTeatro.style.display = 'none';
-                tablaExposiciones.style.display = 'none';
-            });
+        function filaCartelera(item) {
+            return `
+                <tr>
+                    <td>${item.Cine || 'N/A'}</td>
+                    <td><img src="${item['Carátula']}" alt="Carátula" style="width: 80px;"></td>
+                    <td>${item.Título || 'Sin título'}</td>
+                    <td>${item.Director || 'Desconocido'}</td>
+                    <td>${item.Duración || 'No disponible'}</td>
+                    <td>${item.Versión || 'N/A'}</td>
+                    <td>${item.Sesiones || 'N/A'}</td>
+                </tr>
+            `;
+        }
 
-            tabTeatro.addEventListener('click', function () {
-                tabCine.classList.remove('active');
-                tabTeatro.classList.add('active');
-                tabExposiciones.classList.remove('active');
-                tablaCine.style.display = 'none';
-                tablaTeatro.style.display = 'table';
-                tablaExposiciones.style.display = 'none';
-            });
+        function filaTeatro(item) {
+            return `
+                <tr>
+                    <td>${item.Teatro || 'N/A'}</td>
+                    <td><img src="${item['Carátula']}" alt="Carátula" style="width: 80px;"></td>
+                    <td>${item.Título || 'Sin título'}</td>
+                    <td>${item.Director || 'Desconocido'}</td>
+                    <td>${item.Duración || 'No disponible'}</td>
+                    <td>${item.Versión || 'N/A'}</td>
+                    <td>${item.Sesiones || 'N/A'}</td>
+                </tr>
+            `;
+        }
 
-            tabExposiciones.addEventListener('click', function () {
-                tabCine.classList.remove('active');
-                tabTeatro.classList.remove('active');
-                tabExposiciones.classList.add('active');
-                tablaCine.style.display = 'none';
-                tablaTeatro.style.display = 'none';
-                tablaExposiciones.style.display = 'table';
-            });
+        function filaExposiciones(item) {
+            return `
+                <tr>
+                    <td><img src="${item['Carátula Exposición']}" alt="Carátula" style="width: 80px;"></td>
+                    <td>${item.Exposición || 'N/A'}</td>
+                    <td>${item.Descripción || 'Sin descripción'}</td>
+                    <td>${item.Lugar || 'Lugar no disponible'}</td>
+                    <td>${item.Fechas || 'No disponible'}</td>
+                    <td>${item.Precio || 'Gratis'}</td>
+                    <td><a href="${item.Entradas || '#'}" target="_blank">Entradas</a></td>
+                </tr>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarTabla('./cartelera.json', 'tabla-cine', filaCartelera);
+            cargarTabla('./cartelerateatro.json', 'tabla-teatro', filaTeatro);
+            cargarTabla('./exposiciones.json', 'tabla-exposiciones', filaExposiciones);
         });
     </script>
 </body>
