@@ -15,6 +15,18 @@ function cargarTabla(url, tablaId, procesarFila) {
         .catch(error => console.error('Error:', error));
 }
 
+
+function generarBotonesSesiones(item) {
+    let botones = '';
+    for (let i = 1; i <= 6; i++) {
+        if (item[`Sesión ${i}`]) {
+            botones += `<a href="${item[`Link Sesión ${i}`]}" class="session-button" target="_blank">${item[`Sesión ${i}`]}</a>`;
+        }
+    }
+    return botones || 'N/A';
+}
+
+
 function filaCartelera(item) {
     return `
         <tr>
@@ -24,7 +36,7 @@ function filaCartelera(item) {
             <td>${item.Director || 'Desconocido'}</td>
             <td>${item.Duración || 'No disponible'}</td>
             <td>${item.Versión || 'N/A'}</td>
-            <td>${item.Sesiones || 'N/A'}</td>
+            <td>${generarBotonesSesiones(item)}</td>
         </tr>
     `;
 }
@@ -38,7 +50,7 @@ function filaTeatro(item) {
             <td>${item.Director || 'Desconocido'}</td>
             <td>${item.Duración || 'No disponible'}</td>
             <td>${item.Versión || 'N/A'}</td>
-            <td>${item.Sesiones || 'N/A'}</td>
+            <td>${generarBotonesSesiones(item)}</td>
         </tr>
     `;
 }
@@ -58,6 +70,22 @@ function filaExposiciones(item) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.nav-link');
+    const panes = document.querySelectorAll('.tab-pane');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            tab.classList.add('active');
+            const targetPane = document.querySelector(tab.getAttribute('href'));
+            if (targetPane) targetPane.classList.add('active');
+        });
+    });
+
+    // Carga de datos
     cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
     cargarTabla('./data/cartelerateatro.json', 'tabla-teatro', filaTeatro);
     cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
