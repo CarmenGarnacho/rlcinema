@@ -28,6 +28,56 @@ body {
     height: auto;
 }
 
+.filtro_horarios {
+    margin-bottom: 20px;
+    text-align: right;
+    position: relative;
+    display: inline-block;
+    float: right;
+}
+
+.filtro_horarios h3 {
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.filtro_horarios .txtInstruccion {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.filtro_horarios .row span {
+    flex: 1;
+    font-size: 14px;
+    text-align: center;
+}
+
+#slider-range {
+    margin: 10px 0;
+    height: 4px;
+    background: #ddd;
+    border-radius: 4px;
+    position: relative;
+}
+
+#slider-range .ui-slider-range {
+    background: #ffa000;
+    border-radius: 4px;
+}
+
+#slider-range .ui-slider-handle {
+    width: 15px;
+    height: 15px;
+    background: #fff;
+    border: 2px solid #ffa000;
+    border-radius: 50%;
+    position: absolute;
+    top: -6px;
+    transform: translate(-50%);
+}
+
 .nav-pills {
     display: flex;
     justify-content: center;

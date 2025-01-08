@@ -90,3 +90,53 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarTabla('./data/cartelerateatro.json', 'tabla-teatro', filaTeatro);
     cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
 });
+
+function filtrarSesiones(horaInicio, horaFin) {
+    const tablas = document.querySelectorAll('table[id^="tabla-"]');
+
+    tablas.forEach(tabla => {
+        const filas = tabla.querySelectorAll('tbody tr');
+
+        filas.forEach(fila => {
+            const botones = fila.querySelectorAll('.session-button');
+            let mostrarFila = false;
+
+            botones.forEach(boton => {
+                const horaSesion = boton.textContent.trim();
+                if (horaSesion && compararHoras(horaSesion, horaInicio, horaFin)) {
+                    mostrarFila = true;
+                    boton.style.display = 'inline-block';
+                } else {
+                    boton.style.display = 'none';
+                }
+            });
+
+            fila.style.display = mostrarFila ? 'table-row' : 'none';
+        });
+    });
+}
+
+function compararHoras(horaSesion, horaInicio, horaFin) {
+    const [horaS, minutoS] = horaSesion.split(':').map(Number);
+    const [horaI, minutoI] = horaInicio.split(':').map(Number);
+    const [horaF, minutoF] = horaFin.split(':').map(Number);
+
+    const minutosSesion = horaS * 60 + minutoS;
+    const minutosInicio = horaI * 60 + minutoI;
+    const minutosFin = horaF * 60 + minutoF;
+
+    return minutosSesion >= minutosInicio && minutosSesion <= minutosFin;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const rango = document.querySelector('.rangoTiempo');
+    const slider = document.getElementById('slider-range');
+
+    slider.addEventListener('input', () => {
+        const horaInicio = '15:00'; // Obtener valor del slider
+        const horaFin = '23:59'; // Obtener valor del slider
+
+        rango.textContent = `${horaInicio} - ${horaFin}`;
+        filtrarSesiones(horaInicio, horaFin);
+    });
+});
