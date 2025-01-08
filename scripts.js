@@ -91,52 +91,46 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
 });
 
-function filtrarSesiones(horaInicio, horaFin) {
-    const tablas = document.querySelectorAll('table[id^="tabla-"]');
-
-    tablas.forEach(tabla => {
-        const filas = tabla.querySelectorAll('tbody tr');
-
-        filas.forEach(fila => {
-            const botones = fila.querySelectorAll('.session-button');
-            let mostrarFila = false;
-
-            botones.forEach(boton => {
-                const horaSesion = boton.textContent.trim();
-                if (horaSesion && compararHoras(horaSesion, horaInicio, horaFin)) {
-                    mostrarFila = true;
-                    boton.style.display = 'inline-block';
-                } else {
-                    boton.style.display = 'none';
-                }
-            });
-
-            fila.style.display = mostrarFila ? 'table-row' : 'none';
-        });
-    });
-}
-
-function compararHoras(horaSesion, horaInicio, horaFin) {
-    const [horaS, minutoS] = horaSesion.split(':').map(Number);
-    const [horaI, minutoI] = horaInicio.split(':').map(Number);
-    const [horaF, minutoF] = horaFin.split(':').map(Number);
-
-    const minutosSesion = horaS * 60 + minutoS;
-    const minutosInicio = horaI * 60 + minutoI;
-    const minutosFin = horaF * 60 + minutoF;
-
-    return minutosSesion >= minutosInicio && minutosSesion <= minutosFin;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    const rango = document.querySelector('.rangoTiempo');
-    const slider = document.getElementById('slider-range');
+    const sliderInicio = document.getElementById('slider-inicio');
+    const sliderFin = document.getElementById('slider-fin');
+    const labelInicio = document.getElementById('label-inicio');
+    const labelFin = document.getElementById('label-fin');
 
-    slider.addEventListener('input', () => {
-        const horaInicio = '15:00'; // Obtener valor del slider
-        const horaFin = '23:59'; // Obtener valor del slider
+    // Actualiza las etiquetas y realiza el filtrado
+    function actualizarEtiquetasYFiltrar() {
+        const horaInicio = convertirMinutosAHoras(sliderInicio.value);
+        const horaFin = convertirMinutosAHoras(sliderFin.value);
 
-        rango.textContent = `${horaInicio} - ${horaFin}`;
+        labelInicio.textContent = horaInicio;
+        labelFin.textContent = horaFin;
+
         filtrarSesiones(horaInicio, horaFin);
+    }
+
+    // Convierte minutos en formato HH:MM
+    function convertirMinutosAHoras(minutos) {
+        const horas = Math.floor(minutos / 60);
+        const mins = minutos % 60;
+        return `${horas.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    }
+
+    // Control de eventos
+    sliderInicio.addEventListener('input', () => {
+        if (parseInt(sliderInicio.value) >= parseInt(sliderFin.value)) {
+            sliderInicio.value = sliderFin.value - 15; // Evita cruce de rangos
+        }
+        actualizarEtiquetasYFiltrar();
     });
+
+    sliderFin.addEventListener('input', () => {
+        if (parseInt(sliderFin.value) <= parseInt(sliderInicio.value)) {
+            sliderFin.value = parseInt(sliderInicio.value) + 15; // Evita cruce de rangos
+        }
+        actualizarEtiquetasYFiltrar();
+    });
+
+    // Inicialización
+    actualizarEtiquetasYFiltrar();
 });
+

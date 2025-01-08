@@ -34,12 +34,13 @@
                             <span class="col6">De</span> 
                             <span class="col6">A</span>
                         </p>
-                        <div id="slider-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all ui-slider-pips">
-                            <div class="ui-slider-range ui-widget-header ui-corner-all" style="left: 62.5%; width: 37.5%;"></div>
-                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 62.5%;"></a>
-                            <a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 100%;"></a>
+                        <div class="slider-container">
+                            <input type="range" id="slider-inicio" min="0" max="1440" value="1200" step="15">
+                            <input type="range" id="slider-fin" min="0" max="1440" value="1439" step="15">
+                            <div class="slider-labels">
+                                <span id="label-inicio">20:00</span> - <span id="label-fin">23:59</span>
+                            </div>
                         </div>
-                        <span class="rangoTiempo">15:00 - 23:59</span>
                     </div>
                 </div>
                 <table id="tabla-cine">
