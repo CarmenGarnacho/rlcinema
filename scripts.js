@@ -6,7 +6,7 @@ function cargarTabla(url, tablaId, procesarFila) {
         })
         .then(data => {
             const tabla = document.querySelector(`#${tablaId} tbody`);
-            tabla.innerHTML = ''; // Limpia el contenido previo
+            tabla.innerHTML = ''; // Limpia la tabla antes de cargar los datos
             data.forEach(item => {
                 const fila = procesarFila(item);
                 tabla.insertAdjacentHTML('beforeend', fila);
@@ -78,18 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // Remover 'active' de todas las pestañas y contenidos
+            // Cambiar clases activas
             tabs.forEach(t => t.classList.remove('active'));
             panes.forEach(pane => pane.classList.remove('active', 'show'));
 
-            // Añadir 'active' a la pestaña clicada y su contenido
             tab.classList.add('active');
             const targetPane = document.querySelector(tab.getAttribute('href'));
             if (targetPane) {
                 targetPane.classList.add('active', 'show');
             }
 
-            // Cargar datos en la tabla correspondiente
+            // Cargar datos según la pestaña seleccionada
             if (tab.id === 'tab-cine') {
                 cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
             } else if (tab.id === 'tab-teatro') {
@@ -100,10 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Carga inicial para la pestaña activa
+    // Carga inicial (Cine por defecto)
     cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
 });
-
 
 function convertMinutesToTime(minutes) {
     const hours = Math.floor(minutes / 60);

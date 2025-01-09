@@ -118,6 +118,14 @@ body {
     display: block; /* Mostrar solo el contenido activo */
 }
 
+#tabla-teatro, #tabla-exposiciones {
+    display: none;
+}
+
+.tab-pane.active table {
+    display: table; /* Muestra la tabla cuando su pestaña esté activa */
+}
+
 table {
     width: 100%;
     table-layout: auto;
