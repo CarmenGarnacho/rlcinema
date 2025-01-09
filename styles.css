@@ -110,6 +110,14 @@ body {
     min-height: 400px; /* Asegura que el contenido tenga una altura mínima */
 }
 
+.tab-pane {
+    display: none; /* Ocultar todos los contenidos por defecto */
+}
+
+.tab-pane.active {
+    display: block; /* Mostrar solo el contenido activo */
+}
+
 table {
     width: 100%;
     table-layout: auto;

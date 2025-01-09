@@ -50,10 +50,11 @@ function filaTeatro(item) {
             <td>${item.Director || 'Desconocido'}</td>
             <td>${item.Duración || 'No disponible'}</td>
             <td>${item.Versión || 'N/A'}</td>
-            <td>${generarBotonesSesiones(item)}</td>
+            <td>${item.Sesión_1 || 'Sin sesiones'}</td>
         </tr>
     `;
 }
+
 
 function filaExposiciones(item) {
     return `
@@ -76,21 +77,39 @@ document.addEventListener('DOMContentLoaded', () => {
     tabs.forEach(tab => {
         tab.addEventListener('click', (e) => {
             e.preventDefault();
-            tabs.forEach(t => t.classList.remove('active'));
-            panes.forEach(pane => pane.classList.remove('active'));
 
+            // Remover 'active' de todas las pestañas y contenidos
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(pane => pane.classList.remove('active', 'show'));
+
+            // Añadir 'active' a la pestaña clicada y su contenido
             tab.classList.add('active');
             const targetPane = document.querySelector(tab.getAttribute('href'));
-            if (targetPane) targetPane.classList.add('active');
+            if (targetPane) {
+                targetPane.classList.add('active', 'show');
+            }
+
+            // Cargar datos en la tabla correspondiente
+            if (tab.id === 'tab-cine') {
+                cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
+            } else if (tab.id === 'tab-teatro') {
+                cargarTabla('./data/cartelerateatro.json', 'tabla-teatro', filaTeatro);
+            } else if (tab.id === 'tab-exposiciones') {
+                cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
+            }
         });
     });
 
-    // Carga de datos
+    // Carga inicial para la pestaña activa
     cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
-    cargarTabla('./data/cartelerateatro.json', 'tabla-teatro', filaTeatro);
-    cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
 });
 
+
+function convertMinutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     $("#slider-range").slider({
