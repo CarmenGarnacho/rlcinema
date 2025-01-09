@@ -37,22 +37,37 @@ def scrape_conde_duque_morasol():
         data = []
         for pelicula in peliculas:
             try:
-                # Extraer el título de la película
-                titulo = pelicula.find_element(By.CLASS_NAME, 'title-movie-list').find_element(By.TAG_NAME, 'a').text.strip()
-            except:
+                # Extraer el título de la película (considerar ambas ubicaciones posibles)
+                try:
+                    titulo_tag = pelicula.find_element(By.CLASS_NAME, 'title-movie-list').find_element(By.CLASS_NAME, 'xxs-hidden-2')
+                    titulo = titulo_tag.get_attribute('innerText').strip()
+                except:
+                    titulo_tag = pelicula.find_element(By.CLASS_NAME, 'title-movie-list').find_element(By.TAG_NAME, 'a')
+                    titulo = titulo_tag.get_attribute('innerText').strip()
+            except Exception as e:
+                print(f"Error al extraer el título: {e}")
                 titulo = 'Título no disponible'
 
             try:
                 # Extraer la duración
-                duracion = pelicula.find_element(By.CLASS_NAME, 'glyphicon-time').find_element(By.XPATH, '..').text.strip()
+                duracion_tag = pelicula.find_element(By.CLASS_NAME, 'glyphicon-time')
+                duracion = duracion_tag.find_element(By.XPATH, '..').text.strip()
             except:
                 duracion = 'Duración no disponible'
 
             try:
                 # Extraer la imagen (carátula)
-                imagen = pelicula.find_element(By.TAG_NAME, 'img').get_attribute('src')
+                imagen_tag = pelicula.find_element(By.TAG_NAME, 'img')
+                imagen = imagen_tag.get_attribute('src')
             except:
                 imagen = 'Imagen no disponible'
+
+            try:
+                # Extraer la versión
+                version_tag = pelicula.find_element(By.CLASS_NAME, 'label-cinema')
+                version = version_tag.text.strip()
+            except:
+                version = 'Versión no disponible'
 
             # Extraer las sesiones y sus enlaces de compra
             try:
@@ -79,7 +94,8 @@ def scrape_conde_duque_morasol():
                 row = {
                     'Carátula': imagen,
                     'Título': titulo,
-                    'Duración': duracion
+                    'Duración': duracion,
+                    'Versión': version
                 }
 
                 # Añadir las sesiones
@@ -97,6 +113,7 @@ def scrape_conde_duque_morasol():
 
         # Crear un DataFrame con los datos
         df = pd.DataFrame(data)
+        # df.to_csv('condeduque.csv', index=False, encoding='utf-8-sig')
         return df
 
     finally:
