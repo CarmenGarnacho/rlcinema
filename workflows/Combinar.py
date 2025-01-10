@@ -116,19 +116,19 @@ def obtener_cartelera_combinada():
     # Guardar los datos en un archivo JSON
     peliculas_sesiones = all_data.to_dict(orient='records')
 
-    # Obtener la ruta del directorio actual del script
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(current_dir, 'cartelera.json')
+    # Ruta fija al directorio deseado
+    json_path = r'C:/Users/Equipo 66/Desktop/RLCinema/rlcinema/data/cartelera.json'
 
-    # Guardar el archivo JSON en la ruta adecuada
+    # Guardar el archivo JSON en la ruta específica
     try:
         with open(json_path, 'w') as f:
             json.dump(peliculas_sesiones, f, indent=4)
-        print("Archivo 'cartelera.json' guardado exitosamente.")
+        print(f"Archivo 'cartelera.json' guardado exitosamente en {json_path}.")
     except Exception as e:
         print(f"Error al guardar el archivo: {e}")
 
-    return all_data
+    return all_data  # Asegúrate de que esta línea esté dentro de la función
+
 
 # Solo imprime el DataFrame si se ejecuta este archivo directamente
 if __name__ == '__main__':
