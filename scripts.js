@@ -15,7 +15,6 @@ function cargarTabla(url, tablaId, procesarFila) {
         .catch(error => console.error('Error:', error));
 }
 
-
 function generarBotonesSesiones(item) {
     let botones = '';
     for (let i = 1; i <= 6; i++) {
@@ -25,7 +24,6 @@ function generarBotonesSesiones(item) {
     }
     return botones || 'N/A';
 }
-
 
 function filaCartelera(item) {
     return `
@@ -55,7 +53,6 @@ function filaTeatro(item) {
     `;
 }
 
-
 function filaExposiciones(item) {
     return `
         <tr>
@@ -78,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // Cambiar clases activas
             tabs.forEach(t => t.classList.remove('active'));
             panes.forEach(pane => pane.classList.remove('active', 'show'));
 
@@ -88,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetPane.classList.add('active', 'show');
             }
 
-            // Cargar datos según la pestaña seleccionada
             if (tab.id === 'tab-cine') {
                 cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
             } else if (tab.id === 'tab-teatro') {
@@ -99,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Carga inicial (Cine por defecto)
     cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
 });
 
@@ -115,23 +109,16 @@ document.addEventListener("DOMContentLoaded", () => {
         min: 0,
         max: 1440,
         step: 15,
-        values: [600, 1320], // Valores iniciales: 19:00 y 21:00
-        slide: function (event, ui) {
-        // Prevenir problemas con eventos táctiles
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-            event.preventDefault();
-        }
+        values: [600, 1320],
+        slide: function(event, ui) {
             const startTime = convertMinutesToTime(ui.values[0]);
             const endTime = convertMinutesToTime(ui.values[1]);
-
             $("#label-inicio").text(startTime);
             $("#label-fin").text(endTime);
-
             filtrarSesiones(startTime, endTime);
         }
     });
 
-    // Inicializar etiquetas
     const initialStart = convertMinutesToTime($("#slider-range").slider("values", 0));
     const initialEnd = convertMinutesToTime($("#slider-range").slider("values", 1));
 
@@ -139,39 +126,16 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#label-fin").text(initialEnd);
 });
 
-function convertMinutesToTime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-}
-
 function filtrarSesiones(horaInicio, horaFin) {
     const filas = document.querySelectorAll("#tabla-cine tbody tr");
-
     filas.forEach(fila => {
-        const sesiones = fila.querySelectorAll(".session-button");
         let mostrar = false;
-
-        sesiones.forEach(boton => {
+        fila.querySelectorAll(".session-button").forEach(boton => {
             const hora = boton.textContent.trim();
             if (hora >= horaInicio && hora <= horaFin) {
                 mostrar = true;
             }
         });
-
         fila.style.display = mostrar ? "" : "none";
     });
-}
-// Asegurar soporte táctil para jQuery UI Slider
-if (typeof $.ui !== 'undefined' && typeof $.ui.slider !== 'undefined') {
-    $.ui.slider.prototype._touchStart = $.ui.slider.prototype._mouseStart;
-    $.ui.slider.prototype._touchDrag = $.ui.slider.prototype._mouseDrag;
-    $.ui.slider.prototype._touchStop = $.ui.slider.prototype._mouseStop;
-    $.ui.slider.prototype._mouseCapture = function(event) {
-        if (event.touches) {
-            event.pageX = event.touches[0].pageX;
-            event.pageY = event.touches[0].pageY;
-        }
-        return true;
-    };
 }
