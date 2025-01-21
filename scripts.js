@@ -117,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         step: 15,
         values: [600, 1320], // Valores iniciales: 19:00 y 21:00
         slide: function (event, ui) {
+        // Prevenir problemas con eventos táctiles
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             event.preventDefault();
         }
@@ -160,4 +161,17 @@ function filtrarSesiones(horaInicio, horaFin) {
 
         fila.style.display = mostrar ? "" : "none";
     });
+}
+// Asegurar soporte táctil para jQuery UI Slider
+if (typeof $.ui !== 'undefined' && typeof $.ui.slider !== 'undefined') {
+    $.ui.slider.prototype._touchStart = $.ui.slider.prototype._mouseStart;
+    $.ui.slider.prototype._touchDrag = $.ui.slider.prototype._mouseDrag;
+    $.ui.slider.prototype._touchStop = $.ui.slider.prototype._mouseStop;
+    $.ui.slider.prototype._mouseCapture = function(event) {
+        if (event.touches) {
+            event.pageX = event.touches[0].pageX;
+            event.pageY = event.touches[0].pageY;
+        }
+        return true;
+    };
 }
