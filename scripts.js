@@ -117,6 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
         step: 15,
         values: [600, 1320], // Valores iniciales: 19:00 y 21:00
         slide: function (event, ui) {
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            event.preventDefault();
+        }
             const startTime = convertMinutesToTime(ui.values[0]);
             const endTime = convertMinutesToTime(ui.values[1]);
 
@@ -158,7 +161,3 @@ function filtrarSesiones(horaInicio, horaFin) {
         fila.style.display = mostrar ? "" : "none";
     });
 }
-
-
-
-
