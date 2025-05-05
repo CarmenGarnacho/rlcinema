@@ -16,7 +16,6 @@ from CBA import scrape_circulo_bellas_artes
 from sala_berlanga import scrape_sala_berlanga
 from cines_ideal import scrape_yelmo_ideal
 
-
 def obtener_cartelera_combinada():
     # Llama a las funciones para obtener DataFrames
     df_embajadores = scrape_cines_embajadores()
@@ -116,19 +115,25 @@ def obtener_cartelera_combinada():
     # Guardar los datos en un archivo JSON
     peliculas_sesiones = all_data.to_dict(orient='records')
 
-    # Obtener la ruta del directorio actual del script
+    # Obtener la ruta del directorio 'data'
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(current_dir, 'cartelera.json')
+    data_dir = os.path.join(current_dir, '..', 'data')  # Ir un nivel arriba y entrar a 'data'
 
-    # Guardar el archivo JSON en la ruta adecuada
+    # Asegurarse de que la carpeta 'data' exista
+    os.makedirs(data_dir, exist_ok=True)
+
+    # Definir la ruta del archivo JSON
+    json_path = os.path.join(data_dir, 'cartelera.json')
+
+    # Guardar el archivo JSON
     try:
         with open(json_path, 'w') as f:
             json.dump(peliculas_sesiones, f, indent=4)
-        print("Archivo 'cartelera.json' guardado exitosamente.")
+        print(f"Archivo 'cartelera.json' guardado exitosamente en {json_path}.")
     except Exception as e:
         print(f"Error al guardar el archivo: {e}")
 
-    return all_data
+    return all_data  # Asegúrate de que esta línea esté dentro de la función
 
 # Solo imprime el DataFrame si se ejecuta este archivo directamente
 if __name__ == '__main__':

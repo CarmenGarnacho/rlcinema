@@ -188,7 +188,7 @@ def scrape_sala_equis():
 
         # Imprimir el DataFrame para verificar los datos
         print(df)
-        # df.to_csv('pepaciencia.csv', index=False, encoding='utf-8-sig')
+        df.to_csv('salaequis.csv', index=False, encoding='utf-8-sig')
         return df
     else:
         print(f"Error al acceder a la página principal: {response.status_code}")

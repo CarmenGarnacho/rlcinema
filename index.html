@@ -5,174 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RLCinema - Cartelera</title>
     <link rel="icon" type="image/ico" href="./static/images/8029330.ico">
-    <style>
-        body {
-            font-family: Helvetica, Arial, sans-serif;
-            background-color: #fff; /* Fondo blanco */
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        .content {
-            width: 100vw;
-            margin: 0 auto;
-            padding: 30px 0;
-            box-sizing: border-box;
-            background-color: #fff; /* Fondo blanco para las pestañas y el contenido */
-            min-height: 100vh; /* Evita que se corte en dispositivos móviles */
-            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1); /* Añadimos sombra para distinguir */
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .logo-container img {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .nav-pills {
-            display: flex;
-            justify-content: center;
-            list-style-type: none;
-            padding: 0;
-            margin-bottom: 0;
-            box-sizing: border-box;
-            gap: 10px; /* Añadido para separar las pestañas */
-            flex-wrap: wrap; /* Permitir que las pestañas se ajusten en una nueva línea si es necesario */
-        }
-
-        .nav-item {
-            flex: 1;
-            margin: 0;
-        }
-
-        .nav-pills .nav-link {
-            font-weight: bold;
-            text-align: center;
-            background: #343436;
-            color: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-            height: 50px;
-            line-height: 50px;
-            margin: 0;
-            display: block;
-            text-decoration: none;
-            font-size: 18px;
-            border: 1px solid transparent;
-            border-bottom: none;
-            box-sizing: border-box;
-        }
-
-        .nav-pills .nav-link.active {
-            background: #f0f0f0; /* Gris muy claro para la pestaña activa */
-            color: #000;
-            border-bottom: none;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
-        }
-
-        .tab-content {
-            width: 100%;
-            background: #fff;
-            color: #000;
-            border-radius: 0px 0px 10px 10px;
-            padding: 30px;
-            box-sizing: border-box;
-            min-height: 400px; /* Asegura que el contenido tenga una altura mínima */
-        }
-
-        table {
-            width: 100%;
-            table-layout: auto;
-            border-collapse: collapse;
-            background-color: white;
-            margin: 0;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-
-        th {
-            background-color: rgb(0, 33, 76);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        tr:nth-child(even) {
-            background-color: rgb(232, 239, 240); /* Colores alternos para las filas */
-        }
-
-        td img {
-            width: 80px;
-            height: auto;
-        }
-
-        .session-button {
-            background-color: rgb(15, 133, 243);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            text-align: center;
-            font-size: 14px;
-            margin: 5px 2px;
-            cursor: pointer;
-            border-radius: 20px;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        .session-button:hover {
-            background-color: rgb(12, 110, 200);
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        .descripcion {
-            text-align: justify;
-        }
-
-        @media (max-width: 768px) {
-            .nav-pills {
-                flex-direction: row; /* Mantener las pestañas en fila horizontal */
-                flex-wrap: nowrap; /* Evitar que las pestañas se apilen verticalmente */
-                overflow-x: auto; /* Habilitar desplazamiento horizontal en caso de ser necesario */
-                gap: 5px; /* Reducir el espacio entre las pestañas en pantallas pequeñas */
-            }
-
-            .nav-pills .nav-item {
-                flex: none; /* Desactivar el estirado de los elementos para mantener el tamaño compacto */
-                margin-bottom: 0;
-            }
-
-            th, td {
-                font-size: 14px;
-            }
-
-            .session-button {
-                width: 100%; /* Permitir que los botones se ajusten al ancho disponible */
-                padding: 8px; /* Ajustar padding para pantallas pequeñas */
-                margin: 5px 0; /* Evitar solapamiento entre botones en pantallas pequeñas */
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 </head>
 <body>
     <div class="content">
@@ -191,9 +28,18 @@
                 <a class="nav-link" id="tab-exposiciones" href="#exposiciones">Exposiciones</a>
             </li>
         </ul>
-
+        
         <div class="tab-content">
             <div id="cine" class="tab-pane active">
+                <div id="slider-container">
+                    <p class="row txtInstruccion">
+                        <span class="col6">Filtro de horarios</span>
+                    </p>
+                    <div id="slider-range"></div>
+                    <div class="slider-labels">
+                        <span id="label-inicio">00:00</span> - <span id="label-fin">23:59</span>
+                    </div>
+                </div>
                 <table id="tabla-cine">
                     <thead>
                         <tr>
@@ -209,8 +55,8 @@
                     <tbody></tbody>
                 </table>
             </div>
-
-            <div id="teatro" class="tab-pane">
+            
+            <div id="teatro" class="tab-pane fade">
                 <table id="tabla-teatro">
                     <thead>
                         <tr>
@@ -226,8 +72,8 @@
                     <tbody></tbody>
                 </table>
             </div>
-
-            <div id="exposiciones" class="tab-pane">
+            
+            <div id="exposiciones" class="tab-pane fade">
                 <table id="tabla-exposiciones">
                     <thead>
                         <tr>
@@ -246,71 +92,6 @@
         </div>
     </div>
 
-    <script>
-        function cargarTabla(url, tablaId, procesarFila) {
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error(`Error al cargar ${url}`);
-                    return response.json();
-                })
-                .then(data => {
-                    const tabla = document.querySelector(`#${tablaId} tbody`);
-                    tabla.innerHTML = ''; // Limpia el contenido previo
-                    data.forEach(item => {
-                        const fila = procesarFila(item);
-                        tabla.insertAdjacentHTML('beforeend', fila);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function filaCartelera(item) {
-            return `
-                <tr>
-                    <td>${item.Cine || 'N/A'}</td>
-                    <td><img src="${item['Carátula']}" alt="Carátula" style="width: 80px;"></td>
-                    <td>${item.Título || 'Sin título'}</td>
-                    <td>${item.Director || 'Desconocido'}</td>
-                    <td>${item.Duración || 'No disponible'}</td>
-                    <td>${item.Versión || 'N/A'}</td>
-                    <td>${item.Sesiones || 'N/A'}</td>
-                </tr>
-            `;
-        }
-
-        function filaTeatro(item) {
-            return `
-                <tr>
-                    <td>${item.Teatro || 'N/A'}</td>
-                    <td><img src="${item['Carátula']}" alt="Carátula" style="width: 80px;"></td>
-                    <td>${item.Título || 'Sin título'}</td>
-                    <td>${item.Director || 'Desconocido'}</td>
-                    <td>${item.Duración || 'No disponible'}</td>
-                    <td>${item.Versión || 'N/A'}</td>
-                    <td>${item.Sesiones || 'N/A'}</td>
-                </tr>
-            `;
-        }
-
-        function filaExposiciones(item) {
-            return `
-                <tr>
-                    <td><img src="${item['Carátula Exposición']}" alt="Carátula" style="width: 80px;"></td>
-                    <td>${item.Exposición || 'N/A'}</td>
-                    <td>${item.Descripción || 'Sin descripción'}</td>
-                    <td>${item.Lugar || 'Lugar no disponible'}</td>
-                    <td>${item.Fechas || 'No disponible'}</td>
-                    <td>${item.Precio || 'Gratis'}</td>
-                    <td><a href="${item.Entradas || '#'}" target="_blank">Entradas</a></td>
-                </tr>
-            `;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarTabla('./data/cartelera.json', 'tabla-cine', filaCartelera);
-            cargarTabla('./data/cartelerateatro.json', 'tabla-teatro', filaTeatro);
-            cargarTabla('./data/exposiciones.json', 'tabla-exposiciones', filaExposiciones);
-        });
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
